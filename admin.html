@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Admin Dashboard - HostelGist</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+
+<body>
+
+<div class="desktop-layout">
+
+  <div class="sidebar">
+    <h3><i class="fa fa-building"></i> HostelGist</h3>
+
+    <a href="index.html"><i class="fa fa-home"></i> Home</a>
+    <a href="#"><i class="fa fa-shield"></i> Dashboard</a>
+    <a href="#" onclick="logout()"><i class="fa fa-sign-out"></i> Logout</a>
+  </div>
+
+  <div class="main">
+    <div class="app">
+
+      <div class="header">
+        <h2>Admin Dashboard</h2>
+      </div>
+
+      <div class="form-card">
+
+        <h3>Add New Hostel</h3>
+
+        <input id="name" placeholder="Hostel Name">
+        <input id="price" placeholder="Price">
+        <input id="location" placeholder="Location">
+        <textarea id="description" placeholder="Description"></textarea>
+        <input type="file" id="image">
+
+        <button onclick="addHostel()">Upload Hostel</button>
+
+      </div>
+
+      <h3 style="margin-top:20px;">All Hostels</h3>
+
+      <div id="list" class="hostel-grid"></div>
+
+    </div>
+  </div>
+
+</div>
+
+<script type="module">
+import { supabase } from "./js/supabase.js";
+
+/* ================= AUTH ================= */
+async function protectAdmin() {
+  const { data: { session } } = await supabase.auth.getSession();
+
+  if (!session) {
+    window.location.href = "admin-login.html";
+    return;
+  }
+
+  loadHostels();
+}
+
+protectAdmin();
+
+/* ================= LOAD ================= */
+async function loadHostels() {
+
+  const list = document.getElementById("list");
+  list.innerHTML = "Loading...";
+
+  const { data, error } = await supabase
+    .from("hostels")
+    .select("*")
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    list.innerHTML = "Error loading hostels";
+    return;
+  }
+
+  list.innerHTML = "";
+
+  data.forEach(h => {
+
+    const card = document.createElement("div");
+    card.className = "card";
+
+    card.innerHTML = `
+      <img src="${h.image_url}" />
+      <h3>${h.name}</h3>
+      <p>${h.location}</p>
+      <p>₦${h.price}</p>
+      <button style="background:red;">Delete</button>
+    `;
+
+    card.querySelector("button").onclick = () => deleteHostel(h.id);
+
+    list.appendChild(card);
+  });
+}
+
+/* ================= ADD ================= */
+window.addHostel = async () => {
+
+  const file = document.getElementById("image").files[0];
+
+  if (!file) {
+    alert("Select image");
+    return;
+  }
+
+  const fileName = Date.now() + "_" + file.name;
+
+  /* ================= UPLOAD IMAGE ================= */
+  const { data: uploadData, error: uploadError } =
+    await supabase.storage.from("hostel-images").upload(fileName, file);
+
+  if (uploadError) {
+    console.error("Upload error:", uploadError.message);
+    alert("Image upload failed: " + uploadError.message);
+    return;
+  }
+
+  /* ================= GET PUBLIC URL ================= */
+  const { data: urlData } = supabase.storage
+    .from("hostel-images")
+    .getPublicUrl(fileName);
+
+  const imageUrl = urlData.publicUrl;
+
+  /* ================= INSERT INTO DB ================= */
+  const { error: insertError } = await supabase.from("hostels").insert([{
+    name: document.getElementById("name").value,
+    price: document.getElementById("price").value,
+    location: document.getElementById("location").value,
+    description: document.getElementById("description").value,
+    image_url: imageUrl
+  }]);
+
+  if (insertError) {
+    console.error("Insert error:", insertError.message);
+    alert("Database insert failed: " + insertError.message);
+    return;
+  }
+
+  alert("Hostel added successfully!");
+  loadHostels();
+};
+
+/* ================= DELETE ================= */
+async function deleteHostel(id) {
+
+  console.log("Deleting ID:", id);
+
+  const { error } = await supabase
+    .from("hostels")
+    .delete()
+    .eq("id", id);
+
+  if (error) {
+    alert("Delete failed: " + error.message);
+    return;
+  }
+
+  alert("Deleted successfully");
+  loadHostels();
+}
+
+window.deleteHostel = deleteHostel;
+
+/* ================= LOGOUT ================= */
+window.logout = async () => {
+  await supabase.auth.signOut();
+  window.location.href = "admin-login.html";
+};
+
+</script>
+
+</body>
+</html>

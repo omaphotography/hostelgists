@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Signup - HostelGist</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+<div class="app">
+
+  <h2>Create Account</h2>
+
+  <div class="form-card">
+
+    <input type="text" id="name" placeholder="Full Name">
+    <input type="email" id="email" placeholder="Email">
+    <input type="password" id="password" placeholder="Password">
+
+    <button onclick="signup()">Sign Up</button>
+
+    <p style="margin-top:10px;">
+      Already have an account?
+      <a href="login.html">Login</a>
+    </p>
+
+  </div>
+
+</div>
+
+<script type="module">
+import { supabase } from "./js/supabase.js"
+
+window.signup = async function () {
+
+  const name = document.getElementById("name").value
+  const email = document.getElementById("email").value
+  const password = document.getElementById("password").value
+
+  if (!email || !password) {
+    alert("Fill all required fields")
+    return
+  }
+
+  // 1. Create auth user
+  const { data, error } = await supabase.auth.signUp({
+    email,
+    password
+  })
+
+  if (error) {
+    alert(error.message)
+    return
+  }
+
+  // 2. Save profile in DB
+  const user = data.user
+
+  if (user) {
+    await supabase.from("profiles").insert([
+      {
+        id: user.id,
+        name,
+        email
+      }
+    ])
+  }
+
+  alert("Account created successfully")
+  window.location.href = "login.html"
+}
+</script>
+
+</body>
+</html>

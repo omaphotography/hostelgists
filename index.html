@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>HostelGist</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+
+<body>
+
+<div class="desktop-layout">
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+
+    <h3></h3>
+
+    <a href="index.html"><i class="fa fa-home"></i> Home</a>
+    <a href="add-hostel.html"><i class="fa fa-plus"></i> Add Hostel</a>
+    <a href="profile.html"><i class="fa fa-user"></i> Profile</a>
+      <a href="map.html">
+    <i class="fa fa-map"></i>
+  </a>
+
+    <a href="admin-login.html" style="font-size:12px; color:red;">
+      Admin
+    </a>
+
+  </div>
+
+  <!-- MAIN -->
+  <div class="main">
+
+    <div class="app">
+
+      <!-- HEADER -->
+      <div class="header">
+        <h2><i class="fa fa-building"></i> HostelGist</h2>
+        <i class="fa fa-user"></i>
+      </div>
+
+      <!-- SEARCH -->
+      <div class="search">
+        <i class="fa fa-search"></i>
+        <input type="text" id="searchInput" placeholder="Search hostels...">
+      </div>
+
+      <!-- FILTERS (UI ONLY FOR NOW) -->
+      <div class="filters">
+        <button><i class="fa fa-money-bill"></i> Price</button>
+        <button><i class="fa fa-location-dot"></i> Location</button>
+        <button><i class="fa fa-star"></i> Rating</button>
+      </div>
+
+      <!-- HOSTELS -->
+      <div id="hostels" class="hostel-grid"></div>
+
+    </div>
+
+  </div>
+
+</div>
+
+<!-- MOBILE NAV -->
+<div class="nav">
+
+  <a href="index.html" class="active">
+    <i class="fa fa-home"></i>
+  </a>
+
+  <a href="map.html">
+    <i class="fa fa-map"></i>
+  </a>
+
+  <a href="add-hostel.html">
+    <i class="fa fa-plus"></i>
+  </a>
+
+  <a href="profile.html">
+    <i class="fa fa-user"></i>
+  </a>
+
+</div>
+
+<!-- IMPORTANT: must be module -->
+<script type="module" src="js/home.js"></script>
+
+</body>
+</html>
