@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Login - HostelGist</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+<div class="app">
+
+  <h2>Login</h2>
+
+  <div class="form-card">
+
+    <input type="email" id="email" placeholder="Email">
+    <input type="password" id="password" placeholder="Password">
+
+    <button onclick="login()">Login</button>
+
+    <!-- 👇 ADD THIS -->
+    <p style="margin-top:10px;">
+      Don't have an account?
+      <a href="signup.html">Sign up</a>
+    </p>
+
+  </div>
+
+</div>
+
+<script type="module">
+import { supabase } from "./js/supabase.js"
+
+window.login = async function () {
+
+  const email = document.getElementById("email").value
+  const password = document.getElementById("password").value
+
+  const { error } = await supabase.auth.signInWithPassword({
+    email,
+    password
+  })
+
+  if (error) {
+    alert(error.message)
+  } else {
+    alert("Login successful")
+    window.location.href = "index.html"
+  }
+}
+</script>
+
+</body>
+</html>

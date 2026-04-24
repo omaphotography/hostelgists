@@ -1,0 +1,460 @@
+/* =========================
+   RESET
+========================= */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+body {
+  background: #eef2f7;
+  max-width: 420px;
+  margin: auto;
+}
+
+/* =========================
+   APP LAYOUT
+========================= */
+.app {
+  padding: 15px;
+}
+
+.main {
+  flex: 1;
+  padding: 20px;
+}
+
+/* =========================
+   HEADER
+========================= */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.header h2 {
+  color: #2563eb;
+  font-weight: 600;
+}
+
+.header i {
+  font-size: 20px;
+}
+
+/* =========================
+   SEARCH
+========================= */
+.search {
+  display: flex;
+  align-items: center;
+  background: white;
+  padding: 10px;
+  border-radius: 12px;
+  margin-bottom: 10px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
+.search input {
+  border: none;
+  outline: none;
+  margin-left: 10px;
+  width: 100%;
+}
+
+/* =========================
+   FILTERS
+========================= */
+.filters {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.filters button {
+  flex: 1;
+  padding: 8px;
+  border-radius: 10px;
+  border: none;
+  background: #e0e7ff;
+  color: #1e40af;
+  font-weight: 500;
+}
+
+/* =========================
+   FORM CARD
+========================= */
+.form-card {
+  background: white;
+  padding: 20px;
+  border-radius: 18px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+  max-width: 600px;
+  margin: auto;
+}
+
+/* INPUTS */
+input, textarea {
+  width: 100%;
+  padding: 12px;
+  margin: 10px 0;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+  outline: none;
+}
+
+/* BUTTON */
+button {
+  width: 100%;
+  padding: 12px;
+  border-radius: 12px;
+  border: none;
+  background: linear-gradient(135deg, #2563eb, #3b82f6);
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+/* =========================
+   HOSTEL GRID
+========================= */
+.hostel-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+/* =========================
+   CARD (CLEAN VERSION)
+========================= */
+.card {
+  background: white;
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+}
+
+.card img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+}
+
+.card h3 {
+  padding: 10px;
+  font-size: 17px;
+  font-weight: 600;
+}
+
+.card p {
+  padding: 0 10px 5px;
+  font-size: 14px;
+}
+
+/* PRICE */
+.price {
+  color: #2563eb;
+  font-weight: bold;
+}
+
+/* STAR */
+.star {
+  color: gold;
+  font-weight: 500;
+}
+
+/* =========================
+   STAR RATING
+========================= */
+.star-rating {
+  display: flex;
+  gap: 8px;
+  font-size: 24px;
+  margin: 10px 0;
+  cursor: pointer;
+}
+
+.star-rating i {
+  color: #d1d5db;
+  transition: 0.2s;
+}
+
+.star-rating i.active {
+  color: gold;
+  transform: scale(1.2);
+}
+
+/* =========================
+   HOSTEL DETAILS
+========================= */
+.hostel-detail {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.detail-img {
+  width: 100%;
+  border-radius: 18px;
+  height: 220px;
+  object-fit: cover;
+}
+
+.detail-card {
+  background: white;
+  padding: 15px;
+  border-radius: 18px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+}
+
+/* =========================
+   REVIEWS
+========================= */
+.review-card {
+  background: white;
+  padding: 12px;
+  border-radius: 12px;
+  margin-top: 10px;
+  box-shadow: 0 5px 12px rgba(0,0,0,0.05);
+}
+
+/* =========================
+   MOBILE NAV (COLORFUL)
+========================= */
+.nav {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  background: linear-gradient(135deg, #ffffff, #f8fafc);
+  padding: 12px 0;
+  border-top: 1px solid #e5e7eb;
+  z-index: 1000;
+  box-shadow: 0 -5px 20px rgba(0,0,0,0.08);
+}
+
+.nav a {
+  flex: 1;
+  text-align: center;
+  text-decoration: none;
+  color: #64748b;
+  font-size: 11px;
+}
+
+.nav i {
+  display: block;
+  font-size: 20px;
+  padding: 10px;
+  border-radius: 14px;
+  transition: 0.3s;
+}
+
+/* COLORS */
+.nav a:nth-child(1) i { color: #2563eb; }
+.nav a:nth-child(2) i { color: #10b981; }
+
+.nav a:nth-child(3) i {
+  color: white;
+  background: linear-gradient(135deg, #f59e0b, #ef4444);
+  transform: scale(1.2);
+}
+
+.nav a:nth-child(4) i { color: #8b5cf6; }
+
+/* =========================
+   DESKTOP MODE
+========================= */
+@media (min-width: 768px) {
+
+  body {
+    max-width: 100%;
+  }
+
+  .desktop-layout {
+    display: flex;
+    gap: 20px;
+  }
+
+  .sidebar {
+    width: 250px;
+    background: white;
+    height: 100vh;
+    padding: 20px;
+    border-right: 1px solid #ddd;
+    position: sticky;
+    top: 0;
+  }
+
+  .sidebar h3 {
+    margin-bottom: 20px;
+    color: #2563eb;
+  }
+
+  .sidebar a {
+    display: block;
+    padding: 10px;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    text-decoration: none;
+    color: #333;
+    transition: 0.2s;
+  }
+
+  .sidebar a:hover {
+    background: #eef2ff;
+    color: #2563eb;
+  }
+
+  .main {
+    flex: 1;
+    padding: 20px;
+  }
+
+  .hostel-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+
+  .nav {
+    display: none;
+  }
+}
+
+/* =========================
+   MOBILE FIX
+========================= */
+@media (max-width: 767px) {
+
+  .sidebar {
+    display: none;
+  }
+
+  .main {
+    padding-bottom: 90px;
+  }
+}
+#stars {
+  display: flex;
+  gap: 8px;
+  font-size: 22px;
+  margin: 10px 0;
+}
+
+#stars i {
+  color: #ccc;
+  transition: 0.2s;
+  cursor: pointer;
+}
+
+#stars i.active,
+#stars i.fa-solid {
+  color: gold;
+}
+
+    #map {
+      height: 100vh;
+      width: 100%;
+    }
+
+    .search-box {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      z-index: 999;
+      background: white;
+      padding: 10px;
+      border-radius: 8px;
+      width: 260px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    }
+
+    .search-box input {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #ccc;
+      outline: none;
+      border-radius: 5px;
+    }
+
+    .result {
+      padding: 6px;
+      cursor: pointer;
+      border-bottom: 1px solid #eee;
+      font-size: 14px;
+    }
+
+    .result:hover {
+      background: #f0f0f0;
+    }
+    .map-layout {
+  height: 100vh;
+  overflow: hidden;
+}
+
+.map-main {
+  position: relative;
+  padding: 0;
+}
+
+/* MAP TAKES FULL SPACE PROPERLY */
+#map {
+  height: 100vh;
+  width: 100%;
+}
+
+/* SEARCH BOX IMPROVED */
+.map-topbar {
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  z-index: 1000;
+  width: 280px;
+  background: white;
+  padding: 10px;
+  border-radius: 10px;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+}
+
+.map-topbar input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  outline: none;
+}
+
+#results {
+  max-height: 200px;
+  overflow-y: auto;
+  margin-top: 8px;
+}
+
+.result {
+  padding: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  border-bottom: 1px solid #eee;
+}
+
+.result:hover {
+  background: #f5f5f5;
+}
+
+/* MOBILE FIX */
+@media(max-width:768px) {
+  .map-topbar {
+    width: 90%;
+  }
+}

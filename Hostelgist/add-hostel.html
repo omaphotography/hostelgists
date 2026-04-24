@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Add Hostel</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+
+<body>
+
+<div class="desktop-layout">
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+
+    <h3><i class="fa fa-building"></i> HostelGist</h3>
+
+    <a href="index.html"><i class="fa fa-home"></i> Home</a>
+    <a href="add-hostel.html" class="active"><i class="fa fa-plus"></i> Add Hostel</a>
+    <a href="profile.html"><i class="fa fa-user"></i> Profile</a>
+
+  </div>
+
+  <!-- MAIN -->
+  <div class="main">
+
+    <div class="app">
+
+      <div class="header">
+        <h2><i class="fa fa-plus"></i> Add Hostel</h2>
+      </div>
+
+      <div class="form-card">
+
+        <form id="hostelForm">
+
+          <input type="text" id="name" placeholder="Hostel Name" required>
+
+          <input type="number" id="price" placeholder="Price" required>
+
+          <input type="text" id="location" placeholder="Location" required>
+
+          <textarea id="description" placeholder="Description"></textarea>
+
+          <input type="file" id="image" required>
+
+          <button type="submit">
+            <i class="fa fa-upload"></i> Add Hostel
+          </button>
+
+        </form>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+<!-- MOBILE NAV (FIXED LINKS) -->
+<div class="nav">
+
+  <a href="index.html" >
+    <i class="fa fa-home"></i>
+  </a>
+
+  <a href="#">
+    <i class="fa fa-map"></i>
+  </a>
+
+  <a href="add-hostel.html" class="active">
+    <i class="fa fa-plus"></i>
+  </a>
+
+  <a href="profile.html">
+    <i class="fa fa-user"></i>
+  </a>
+
+</div>
+
+<script type="module" src="js/add-hostel.js"></script>
+
+</body>
+</html>
