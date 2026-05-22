@@ -1,11 +1,26 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Profile - HostelGist</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <link rel="stylesheet" href="css/style.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <meta charset="UTF-8" />
+
+  <title>Profile - HostelGist</title>
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  />
+
+  <link
+    rel="stylesheet"
+    href="css/style.css"
+  />
+
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+  />
+
 </head>
 
 <body>
@@ -15,17 +30,46 @@
   <!-- SIDEBAR -->
   <div class="sidebar">
 
-    <h3><i class="fa fa-building"></i> HostelGist</h3>
+    <div class="sidebar-top">
 
-    <a href="index.html"><i class="fa fa-home"></i> Home</a>
-    <a href="add-hostel.html"><i class="fa fa-plus"></i> Add Hostel</a>
-    <a href="profile.html"><i class="fa fa-user"></i> Profile</a>
+      <div class="logo-box">
+        <i class="fa fa-building"></i>
+      </div>
 
-    <a href="admin-login.html" style="font-size:12px; color:red;">
-      Admin
-    </a>
+      <h2>HostelGist</h2>
+
+    </div>
+
+    <div class="sidebar-links">
+
+      <a href="index.html">
+        <i class="fa fa-home"></i>
+        Home
+      </a>
+
+      <a href="add-hostel.html">
+        <i class="fa fa-plus"></i>
+        Add Hostel
+      </a>
+
+      <a href="profile.html" class="active">
+        <i class="fa fa-user"></i>
+        Profile
+      </a>
+
+      <a
+        href="admin-login.html"
+        class="admin-link"
+      >
+        <i class="fa fa-lock"></i>
+        Admin
+      </a>
+
+    </div>
 
   </div>
+
+
 
   <!-- MAIN -->
   <div class="main">
@@ -34,17 +78,95 @@
 
       <!-- HEADER -->
       <div class="header">
-        <h2><i class="fa fa-user"></i> My Profile</h2>
+
+        <div class="header-left">
+
+          <div class="logo-box">
+            <i class="fa fa-user"></i>
+          </div>
+
+          <div>
+
+            <h2>My Profile</h2>
+
+            <small>
+              Your HostelGist Account
+            </small>
+
+          </div>
+
+        </div>
+
       </div>
 
-      <!-- PROFILE BOX -->
-      <div class="form-card" id="profileBox">
-        <p>Loading profile...</p>
+
+
+      <!-- PROFILE -->
+      <div
+        class="form-card profile-card"
+        id="profileBox"
+      >
+
+        <div class="loading-profile">
+
+          <i class="fa fa-spinner fa-spin"></i>
+
+          <p>Loading profile...</p>
+
+        </div>
+
       </div>
+
+
+
+      <!-- CONTACT -->
+      <div class="form-card contact-box">
+
+        <h3 class="contact-title">
+
+          <i class="fa fa-headset"></i>
+
+          Contact Us
+
+        </h3>
+
+        <a
+          href="mailto:aduraoma2003@gmail.com"
+          class="contact-btn email-btn"
+        >
+
+          <i class="fa fa-envelope"></i>
+
+          Email Us
+
+        </a>
+
+        <a
+          href="https://wa.me/2348065124880"
+          target="_blank"
+          class="contact-btn whatsapp-btn"
+        >
+
+          <i class="fab fa-whatsapp"></i>
+
+          Chat on WhatsApp
+
+        </a>
+
+      </div>
+
+
 
       <!-- LOGOUT -->
-      <button onclick="logout()">
-        <i class="fa fa-sign-out-alt"></i> Logout
+      <button
+        onclick="logout()"
+        class="logout-btn"
+      >
+
+        <i class="fa fa-sign-out-alt"></i>
+
+        Logout
+
       </button>
 
     </div>
@@ -53,97 +175,256 @@
 
 </div>
 
+
+
 <!-- MOBILE NAV -->
 <div class="nav">
 
   <a href="index.html">
+
     <i class="fa fa-home"></i>
+
   </a>
 
-  <a href="#">
+  <a href="map.html">
+
     <i class="fa fa-map"></i>
+
   </a>
 
   <a href="add-hostel.html">
+
     <i class="fa fa-plus"></i>
+
   </a>
 
-  <a href="profile.html" class="active">
+  <a
+    href="profile.html"
+    class="active"
+  >
+
     <i class="fa fa-user"></i>
+
   </a>
 
 </div>
 
+
+
 <script type="module">
-import { supabase } from "./js/supabase.js"
 
-const box = document.getElementById("profileBox")
+import { supabase } from "./js/supabase.js";
 
-/* ================= LOAD PROFILE ================= */
+const box =
+  document.getElementById(
+    "profileBox"
+  );
+
+/* =========================
+LOAD PROFILE
+========================= */
+
 async function loadProfile() {
 
-  const { data: { user }, error } = await supabase.auth.getUser()
+  try {
 
-  if (!user) {
-    window.location.href = "login.html"
-    return
-  }
+    /* =========================
+    GET LOGGED IN USER
+    ========================= */
 
-  const { data, error: profileError } = await supabase
-    .from("profiles")
-    .select("*")
-    .eq("id", user.id)
-    .single()
+    const {
+      data: { user },
+      error: userError
+    } = await supabase.auth.getUser();
 
-  if (profileError) {
-    box.innerHTML = "<p>Failed to load profile</p>"
-    console.log(profileError.message)
-    return
-  }
+    if (userError || !user) {
 
-  box.innerHTML = `
-    <div style="text-align:center;">
-      
-      <div style="
-        width:80px;
-        height:80px;
-        border-radius:50%;
-        background:#2563eb;
-        color:white;
-        display:flex;
-        align-items:center;
-        justify-content:center;
-        font-size:30px;
-        margin:auto;
-      ">
-        ${data.name ? data.name.charAt(0).toUpperCase() : "U"}
+      window.location.href =
+        "login.html";
+
+      return;
+    }
+
+    /* =========================
+    GET PROFILE
+    ========================= */
+
+    const {
+      data,
+      error
+    } = await supabase
+      .from("profiles")
+      .select("*")
+      .eq("id", user.id)
+      .maybeSingle();
+
+    /* =========================
+    AUTO CREATE PROFILE IF MISSING
+    ========================= */
+
+    let profile = data;
+
+    if (!profile) {
+
+      const newProfile = {
+        id: user.id,
+        name:
+          user.user_metadata?.name ||
+          "User",
+        email:
+          user.email
+      };
+
+      const {
+        data: insertedProfile,
+        error: insertError
+      } = await supabase
+        .from("profiles")
+        .insert([newProfile])
+        .select()
+        .single();
+
+      if (insertError) {
+
+        console.log(insertError);
+
+        box.innerHTML = `
+
+          <div class="error-profile">
+
+            <i class="fa fa-circle-exclamation"></i>
+
+            <p>
+              Failed to create profile
+            </p>
+
+          </div>
+
+        `;
+
+        return;
+      }
+
+      profile = insertedProfile;
+    }
+
+    /* =========================
+    PROFILE VALUES
+    ========================= */
+
+    const fullName =
+      profile?.name ||
+      user.user_metadata?.name ||
+      "User";
+
+    const email =
+      profile?.email ||
+      user.email ||
+      "No Email";
+
+    /* =========================
+    SHOW PROFILE
+    ========================= */
+
+    box.innerHTML = `
+
+      <div class="profile-wrapper">
+
+        <div class="profile-avatar">
+
+          ${fullName
+            .charAt(0)
+            .toUpperCase()}
+
+        </div>
+
+        <h2 class="profile-name">
+
+          ${fullName}
+
+        </h2>
+
+        <p class="profile-email">
+
+          <i class="fa fa-envelope"></i>
+
+          ${email}
+
+        </p>
+
+        <div class="profile-info-grid">
+
+          <div class="profile-info-card">
+
+            <i class="fa fa-user"></i>
+
+            <h4>Registered Name</h4>
+
+            <p>${fullName}</p>
+
+          </div>
+
+          <div class="profile-info-card">
+
+            <i class="fa fa-at"></i>
+
+            <h4>Email Address</h4>
+
+            <p>${email}</p>
+
+          </div>
+
+        </div>
+
       </div>
 
-      <h3 style="margin-top:10px;">${data.name || "No Name"}</h3>
-      <p style="color:gray;">${data.email || user.email}</p>
+    `;
 
-    </div>
-  `
+  } catch (err) {
+
+    console.log(err);
+
+    box.innerHTML = `
+
+      <div class="error-profile">
+
+        <i class="fa fa-circle-exclamation"></i>
+
+        <p>
+          Something went wrong
+        </p>
+
+      </div>
+
+    `;
+  }
 }
 
-/* ================= LOGOUT ================= */
+/* =========================
+LOGOUT
+========================= */
+
 window.logout = async () => {
 
-  const confirmLogout = confirm("Are you sure you want to logout?")
-  if (!confirmLogout) return
+  const confirmLogout =
+    confirm(
+      "Are you sure you want to logout?"
+    );
 
-  const { error } = await supabase.auth.signOut()
+  if (!confirmLogout) return;
 
-  if (error) {
-    alert("Logout failed")
-    console.log(error.message)
-    return
-  }
+  await supabase.auth.signOut();
 
-  window.location.href = "login.html"
-}
+  window.location.href =
+    "login.html";
+};
 
-loadProfile()
+/* =========================
+START
+========================= */
+
+loadProfile();
+
 </script>
 
 </body>
