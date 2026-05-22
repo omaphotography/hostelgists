@@ -1,11 +1,17 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Add Hostel</title>
+
+  <meta charset="UTF-8">
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+  <title>Add Hostel - HostelGist</title>
+
   <link rel="stylesheet" href="css/style.css">
+
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
 </head>
 
 <body>
@@ -15,11 +21,28 @@
   <!-- SIDEBAR -->
   <div class="sidebar">
 
-    <h3><i class="fa fa-building"></i> HostelGist</h3>
+    <div class="sidebar-top">
+      <div class="logo-box">
+        <i class="fa fa-building"></i>
+      </div>
+      <h2>HostelGist</h2>
+    </div>
 
-    <a href="index.html"><i class="fa fa-home"></i> Home</a>
-    <a href="add-hostel.html" class="active"><i class="fa fa-plus"></i> Add Hostel</a>
-    <a href="profile.html"><i class="fa fa-user"></i> Profile</a>
+    <div class="sidebar-links">
+
+      <a href="index.html">
+        <i class="fa fa-home"></i> Home
+      </a>
+
+      <a href="add-hostel.html" class="active">
+        <i class="fa fa-plus"></i> Add Hostel
+      </a>
+
+      <a href="profile.html">
+        <i class="fa fa-user"></i> Profile
+      </a>
+
+    </div>
 
   </div>
 
@@ -28,17 +51,32 @@
 
     <div class="app">
 
+      <!-- HEADER -->
       <div class="header">
-        <h2><i class="fa fa-plus"></i> Add Hostel</h2>
+
+        <div class="header-left">
+
+          <div class="logo-box">
+            <i class="fa fa-plus"></i>
+          </div>
+
+          <div>
+            <h2>Add Hostel</h2>
+            <small>Create new listing</small>
+          </div>
+
+        </div>
+
       </div>
 
+      <!-- FORM -->
       <div class="form-card">
 
         <form id="hostelForm">
 
           <input type="text" id="name" placeholder="Hostel Name" required>
 
-          <input type="number" id="price" placeholder="Price" required>
+          <input type="number" id="price" placeholder="Price (₦)" required>
 
           <input type="text" id="location" placeholder="Location" required>
 
@@ -47,7 +85,7 @@
           <input type="file" id="image" required>
 
           <button type="submit">
-            <i class="fa fa-upload"></i> Add Hostel
+            <i class="fa fa-upload"></i> Upload Hostel
           </button>
 
         </form>
@@ -60,14 +98,14 @@
 
 </div>
 
-<!-- MOBILE NAV (FIXED LINKS) -->
+<!-- MOBILE NAV -->
 <div class="nav">
 
-  <a href="index.html" >
+  <a href="index.html">
     <i class="fa fa-home"></i>
   </a>
 
-  <a href="#">
+  <a href="map.html">
     <i class="fa fa-map"></i>
   </a>
 
@@ -81,7 +119,86 @@
 
 </div>
 
-<script type="module" src="js/add-hostel.js"></script>
+<script type="module">
+
+import { supabase } from "./js/supabase.js";
+
+const form = document.getElementById("hostelForm");
+
+form.addEventListener("submit", async (e) => {
+
+  e.preventDefault();
+
+  const name = document.getElementById("name").value.trim();
+  const price = document.getElementById("price").value.trim();
+  const location = document.getElementById("location").value.trim();
+  const description = document.getElementById("description").value.trim();
+  const file = document.getElementById("image").files[0];
+
+  if (!file) {
+    alert("Please select an image");
+    return;
+  }
+
+  /* ================= GET USER ================= */
+  const {
+    data: { user }
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    alert("You must be logged in");
+    window.location.href = "login.html";
+    return;
+  }
+
+  /* ================= UPLOAD IMAGE ================= */
+  const fileName = Date.now() + "_" + file.name;
+
+  const { error: uploadError } = await supabase
+    .storage
+    .from("hostel-images")
+    .upload(fileName, file);
+
+  if (uploadError) {
+    alert("Image upload failed");
+    console.log(uploadError);
+    return;
+  }
+
+  const { data } = supabase
+    .storage
+    .from("hostel-images")
+    .getPublicUrl(fileName);
+
+  const image_url = data.publicUrl;
+
+  /* ================= INSERT HOSTEL ================= */
+  const { error } = await supabase
+    .from("hostels")
+    .insert([{
+      name,
+      price,
+      location,
+      description,
+      image_url,
+      user_id: user.id   // 🔥 IMPORTANT FIX (prevents FK error)
+    }]);
+
+  if (error) {
+    alert(error.message);
+    console.log(error);
+    return;
+  }
+
+  alert("Hostel added successfully");
+
+  form.reset();
+
+  window.location.href = "index.html";
+
+});
+
+</script>
 
 </body>
 </html>
