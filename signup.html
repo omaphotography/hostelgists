@@ -1,76 +1,153 @@
+<!-- =========================
+SIGNUP.HTML
+========================= -->
+
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Signup - HostelGist</title>
+
+  <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+  <title>Signup - HostelGist</title>
+
   <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
 </head>
 
 <body>
 
-<div class="app">
+<div class="auth-page">
 
-  <h2>Create Account</h2>
+  <div class="auth-card">
 
-  <div class="form-card">
+    <!-- LOGO -->
+    <div class="auth-logo">
 
-    <input type="text" id="name" placeholder="Full Name">
-    <input type="email" id="email" placeholder="Email">
-    <input type="password" id="password" placeholder="Password">
+      <div class="logo-box">
+        <i class="fa fa-building"></i>
+      </div>
 
-    <button onclick="signup()">Sign Up</button>
+      <h2>Create Account</h2>
+      <p>Join HostelGist today</p>
 
-    <p style="margin-top:10px;">
-      Already have an account?
-      <a href="login.html">Login</a>
-    </p>
+    </div>
+
+    <!-- FORM -->
+    <div class="form-card">
+
+      <!-- NAME -->
+      <div class="input-group">
+        <i class="fa fa-user"></i>
+        <input type="text" id="name" placeholder="Full Name">
+      </div>
+
+      <!-- EMAIL -->
+      <div class="input-group">
+        <i class="fa fa-envelope"></i>
+        <input type="email" id="email" placeholder="Email Address">
+      </div>
+
+      <!-- PASSWORD -->
+      <div class="input-group">
+
+        <i class="fa fa-lock"></i>
+
+        <input type="password"
+               id="password"
+               placeholder="Password">
+
+        <i class="fa fa-eye toggle-password"
+           onclick="togglePassword()"
+           id="eyeIcon"></i>
+
+      </div>
+
+      <button onclick="signup()" style="width:100%;">
+        <i class="fa fa-user-plus"></i>
+        Create Account
+      </button>
+
+      <p class="auth-switch">
+        Already have an account?
+        <a href="login.html">Login</a>
+      </p>
+
+    </div>
 
   </div>
 
 </div>
 
 <script type="module">
-import { supabase } from "./js/supabase.js"
 
-window.signup = async function () {
+import { supabase } from "./js/supabase.js";
 
-  const name = document.getElementById("name").value
-  const email = document.getElementById("email").value
-  const password = document.getElementById("password").value
+window.togglePassword = () => {
 
-  if (!email || !password) {
-    alert("Fill all required fields")
-    return
+  const password = document.getElementById("password");
+  const eye = document.getElementById("eyeIcon");
+
+  if (password.type === "password") {
+    password.type = "text";
+    eye.classList.replace("fa-eye", "fa-eye-slash");
+  } else {
+    password.type = "password";
+    eye.classList.replace("fa-eye-slash", "fa-eye");
+  }
+};
+
+window.signup = async () => {
+
+  const name =
+    document.getElementById("name").value.trim();
+
+  const email =
+    document.getElementById("email").value.trim();
+
+  const password =
+    document.getElementById("password").value.trim();
+
+  if (!name || !email || !password) {
+    alert("Fill all fields");
+    return;
   }
 
-  // 1. Create auth user
-  const { data, error } = await supabase.auth.signUp({
-    email,
-    password
-  })
+  const { data, error } =
+    await supabase.auth.signUp({
+      email,
+      password
+    });
 
   if (error) {
-    alert(error.message)
-    return
+    alert(error.message);
+    return;
   }
 
-  // 2. Save profile in DB
-  const user = data.user
+  const user = data.user;
 
   if (user) {
-    await supabase.from("profiles").insert([
-      {
-        id: user.id,
-        name,
-        email
-      }
-    ])
+
+    const { error: profileError } =
+      await supabase
+        .from("profiles")
+        .insert([{
+          id: user.id,
+          name,
+          email
+        }]);
+
+    if (profileError) {
+      console.log(profileError);
+    }
   }
 
-  alert("Account created successfully")
-  window.location.href = "login.html"
-}
+  alert("Signup successful");
+
+  window.location.href = "login.html";
+};
+
 </script>
 
 </body>
