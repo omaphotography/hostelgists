@@ -1,54 +1,144 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
 <head>
+
+  <meta charset="UTF-8">
+
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0">
+
   <title>Admin Login</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="css/style.css">
+
+  <link rel="stylesheet"
+        href="css/style.css">
+
+  <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
 </head>
 
-<body>
+<body class="admin-body">
 
-<div class="app">
+<div class="admin-login-container">
 
-  <h2>Admin Login</h2>
+  <div class="admin-login-card">
 
-  <div class="form-card">
-    <input id="email" placeholder="Email">
-    <input id="password" type="password" placeholder="Password">
+    <div class="admin-top">
 
-    <button onclick="login()">Login</button>
+      <div class="admin-icon">
+
+        <i class="fa fa-shield"></i>
+
+      </div>
+
+      <h2>Admin Login</h2>
+
+      <p>
+        HostelGist Dashboard Access
+      </p>
+
+    </div>
+
+    <form id="adminLoginForm">
+
+      <div class="input-group">
+
+        <i class="fa fa-envelope"></i>
+
+        <input
+          type="email"
+          id="email"
+          placeholder="Admin Email"
+          required
+        >
+
+      </div>
+
+      <div class="input-group">
+
+        <i class="fa fa-lock"></i>
+
+        <input
+          type="password"
+          id="password"
+          placeholder="Admin Password"
+          required
+        >
+
+      </div>
+
+      <button type="submit"
+              class="admin-login-btn">
+
+        Login
+
+      </button>
+
+    </form>
+
   </div>
 
 </div>
 
 <script type="module">
-import { supabase } from "./js/supabase.js";
 
-window.login = async () => {
+import { supabase }
+from "./js/supabase.js";
 
-  const email = document.getElementById("email").value;
-  const password = document.getElementById("password").value;
+const form =
+  document.getElementById("adminLoginForm");
 
-  if (!email || !password) {
-    alert("Fill all fields");
+form.addEventListener("submit", async (e) => {
+
+  e.preventDefault();
+
+  const email =
+    document.getElementById("email").value.trim();
+
+  const password =
+    document.getElementById("password").value.trim();
+
+  const { error: loginError } =
+    await supabase.auth.signInWithPassword({
+      email,
+      password
+    });
+
+  if (loginError) {
+
+    alert(loginError.message);
+
     return;
   }
 
-  const { error } = await supabase.auth.signInWithPassword({
-    email,
-    password
-  });
+  const {
+    data: { user }
+  } = await supabase.auth.getUser();
 
-  if (error) {
-    alert(error.message);
+  const {
+    data: admin,
+    error: adminError
+  } = await supabase
+      .from("admins")
+      .select("*")
+      .eq("id", user.id)
+      .single();
+
+  if (adminError || !admin) {
+
+    await supabase.auth.signOut();
+
+    alert("You are not an admin");
+
     return;
   }
 
-  // wait for session to persist
-  setTimeout(() => {
-    window.location.href = "admin.html";
-  }, 500);
-};
+  alert("Admin login successful");
+
+  window.location.href =
+    "admin.html";
+});
 
 </script>
 
