@@ -1,183 +1,700 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Admin Dashboard - HostelGist</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
 
-  <link rel="stylesheet" href="css/style.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <title>Admin Dashboard - HostelGist</title>
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  />
+
+  <link rel="stylesheet" href="css/style.css" />
+
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+  />
 </head>
 
 <body>
 
 <div class="desktop-layout">
 
+  <!-- SIDEBAR -->
   <div class="sidebar">
-    <h3><i class="fa fa-building"></i> HostelGist</h3>
 
-    <a href="index.html"><i class="fa fa-home"></i> Home</a>
-    <a href="#"><i class="fa fa-shield"></i> Dashboard</a>
-    <a href="#" onclick="logout()"><i class="fa fa-sign-out"></i> Logout</a>
-  </div>
+    <div class="sidebar-top">
 
-  <div class="main">
-    <div class="app">
-
-      <div class="header">
-        <h2>Admin Dashboard</h2>
+      <div class="logo-box">
+        <i class="fa fa-building"></i>
       </div>
 
-      <div class="form-card">
-
-        <h3>Add New Hostel</h3>
-
-        <input id="name" placeholder="Hostel Name">
-        <input id="price" placeholder="Price">
-        <input id="location" placeholder="Location">
-        <textarea id="description" placeholder="Description"></textarea>
-        <input type="file" id="image">
-
-        <button onclick="addHostel()">Upload Hostel</button>
-
-      </div>
-
-      <h3 style="margin-top:20px;">All Hostels</h3>
-
-      <div id="list" class="hostel-grid"></div>
+      <h2>HostelGist</h2>
 
     </div>
+
+    <div class="sidebar-links">
+
+      <a href="index.html">
+        <i class="fa fa-home"></i>
+        Home
+      </a>
+
+      <a href="#" class="active">
+        <i class="fa fa-shield"></i>
+        Dashboard
+      </a>
+
+      <a href="#" onclick="logout()">
+        <i class="fa fa-sign-out-alt"></i>
+        Logout
+      </a>
+
+    </div>
+
+  </div>
+
+
+
+  <!-- MAIN -->
+  <div class="main">
+
+    <div class="app">
+
+      <!-- HEADER -->
+      <div class="header">
+
+        <div class="header-left">
+
+          <div class="logo-box">
+            <i class="fa fa-shield"></i>
+          </div>
+
+          <div>
+            <h2>Admin Dashboard</h2>
+            <small>Manage all hostels easily</small>
+          </div>
+
+        </div>
+
+      </div>
+
+
+
+      <!-- FORM -->
+      <div class="form-card">
+
+        <h3 id="formTitle">
+          <i class="fa fa-plus-circle"></i>
+          Add New Hostel
+        </h3>
+
+        <input
+          id="name"
+          placeholder="Hostel Name"
+        />
+
+        <input
+          id="price"
+          type="number"
+          placeholder="Price"
+        />
+
+        <input
+          id="location"
+          placeholder="Location"
+        />
+
+        <textarea
+          id="description"
+          placeholder="Description"
+        ></textarea>
+
+        <input
+          type="file"
+          id="image"
+          accept="image/*"
+        />
+
+        <button
+          id="submitBtn"
+        >
+          Upload Hostel
+        </button>
+
+      </div>
+
+
+
+      <!-- HOSTELS -->
+      <div class="section-title">
+
+        <h3>
+          <i class="fa fa-building"></i>
+          All Hostels
+        </h3>
+
+      </div>
+
+      <div
+        id="list"
+        class="hostel-grid"
+      ></div>
+
+    </div>
+
   </div>
 
 </div>
 
+
+
 <script type="module">
+
 import { supabase } from "./js/supabase.js";
 
-/* ================= AUTH ================= */
+/* =========================
+STATE
+========================= */
+
+let editingId = null;
+
+const list =
+  document.getElementById("list");
+
+const submitBtn =
+  document.getElementById("submitBtn");
+
+
+/* =========================
+AUTH
+========================= */
+
 async function protectAdmin() {
-  const { data: { session } } = await supabase.auth.getSession();
 
-  if (!session) {
-    window.location.href = "admin-login.html";
-    return;
+  try {
+
+    const {
+      data: { session },
+      error
+    } = await supabase.auth.getSession();
+
+    if (error || !session) {
+
+      window.location.href =
+        "admin-login.html";
+
+      return;
+    }
+
+    loadHostels();
+
+  } catch (err) {
+
+    console.log(err);
+
+    alert("Authentication failed");
   }
-
-  loadHostels();
 }
 
 protectAdmin();
 
-/* ================= LOAD ================= */
+
+/* =========================
+LOAD HOSTELS
+========================= */
+
 async function loadHostels() {
 
-  const list = document.getElementById("list");
-  list.innerHTML = "Loading...";
+  list.innerHTML = `
+    <div class="loading-box">
+      Loading hostels...
+    </div>
+  `;
 
-  const { data, error } = await supabase
-    .from("hostels")
-    .select("*")
-    .order("created_at", { ascending: false });
+  try {
 
-  if (error) {
-    list.innerHTML = "Error loading hostels";
-    return;
-  }
+    const { data, error } =
+      await supabase
+        .from("hostels")
+        .select("*")
+        .order("created_at", {
+          ascending: false
+        });
 
-  list.innerHTML = "";
+    if (error) {
 
-  data.forEach(h => {
+      console.log(error);
 
-    const card = document.createElement("div");
-    card.className = "card";
+      list.innerHTML = `
+        <div class="error-box">
+          Failed to load hostels
+        </div>
+      `;
 
-    card.innerHTML = `
-      <img src="${h.image_url}" />
-      <h3>${h.name}</h3>
-      <p>${h.location}</p>
-      <p>₦${h.price}</p>
-      <button style="background:red;">Delete</button>
+      return;
+    }
+
+    if (!data || data.length === 0) {
+
+      list.innerHTML = `
+        <div class="empty-box">
+          No hostels added yet
+        </div>
+      `;
+
+      return;
+    }
+
+    window.hostelsData = data;
+
+    list.innerHTML = "";
+
+    data.forEach(h => {
+
+      const card =
+        document.createElement("div");
+
+      card.className = "card";
+
+      card.innerHTML = `
+
+        <img
+          src="${
+            h.image_url ||
+            'https://via.placeholder.com/300'
+          }"
+          alt="${h.name || 'Hostel'}"
+        />
+
+        <div class="card-content">
+
+          <div class="card-top">
+
+            <div>
+
+              <h3>
+                ${h.name || "No Name"}
+              </h3>
+
+              <p class="location-text">
+
+                <i class="fa fa-location-dot"></i>
+
+                ${h.location || "No Location"}
+
+              </p>
+
+            </div>
+
+            <div class="price">
+
+              ₦${Number(h.price || 0).toLocaleString()}
+
+            </div>
+
+          </div>
+
+          <p>
+
+            ${h.description || "No description"}
+
+          </p>
+
+          <div class="admin-card-actions">
+
+            <button
+              class="edit-btn"
+              onclick="startEdit('${h.id}')"
+            >
+
+              <i class="fa fa-pen"></i>
+
+              Edit
+
+            </button>
+
+            <button
+              class="delete-btn"
+              onclick="deleteHostel('${h.id}')"
+            >
+
+              <i class="fa fa-trash"></i>
+
+              Delete
+
+            </button>
+
+          </div>
+
+        </div>
+      `;
+
+      list.appendChild(card);
+
+    });
+
+  } catch (err) {
+
+    console.log(err);
+
+    list.innerHTML = `
+      <div class="error-box">
+        Something went wrong
+      </div>
     `;
+  }
+}
 
-    card.querySelector("button").onclick = () => deleteHostel(h.id);
 
-    list.appendChild(card);
+/* =========================
+START EDIT
+========================= */
+
+window.startEdit = function(id) {
+
+  const hostel =
+    window.hostelsData.find(
+      h => h.id === id
+    );
+
+  if (!hostel) return;
+
+  editingId = hostel.id;
+
+  document.getElementById("name").value =
+    hostel.name || "";
+
+  document.getElementById("price").value =
+    hostel.price || "";
+
+  document.getElementById("location").value =
+    hostel.location || "";
+
+  document.getElementById("description").value =
+    hostel.description || "";
+
+  document.getElementById("formTitle").innerHTML = `
+    <i class="fa fa-pen"></i>
+    Edit Hostel
+  `;
+
+  submitBtn.innerHTML =
+    "Update Hostel";
+
+  window.scrollTo({
+    top: 0,
+    behavior: "smooth"
   });
-}
-
-/* ================= ADD ================= */
-window.addHostel = async () => {
-
-  const file = document.getElementById("image").files[0];
-
-  if (!file) {
-    alert("Select image");
-    return;
-  }
-
-  const fileName = Date.now() + "_" + file.name;
-
-  /* ================= UPLOAD IMAGE ================= */
-  const { data: uploadData, error: uploadError } =
-    await supabase.storage.from("hostel-images").upload(fileName, file);
-
-  if (uploadError) {
-    console.error("Upload error:", uploadError.message);
-    alert("Image upload failed: " + uploadError.message);
-    return;
-  }
-
-  /* ================= GET PUBLIC URL ================= */
-  const { data: urlData } = supabase.storage
-    .from("hostel-images")
-    .getPublicUrl(fileName);
-
-  const imageUrl = urlData.publicUrl;
-
-  /* ================= INSERT INTO DB ================= */
-  const { error: insertError } = await supabase.from("hostels").insert([{
-    name: document.getElementById("name").value,
-    price: document.getElementById("price").value,
-    location: document.getElementById("location").value,
-    description: document.getElementById("description").value,
-    image_url: imageUrl
-  }]);
-
-  if (insertError) {
-    console.error("Insert error:", insertError.message);
-    alert("Database insert failed: " + insertError.message);
-    return;
-  }
-
-  alert("Hostel added successfully!");
-  loadHostels();
 };
 
-/* ================= DELETE ================= */
-async function deleteHostel(id) {
 
-  console.log("Deleting ID:", id);
+/* =========================
+ADD / UPDATE HOSTEL
+========================= */
 
-  const { error } = await supabase
-    .from("hostels")
-    .delete()
-    .eq("id", id);
+async function addHostel() {
 
-  if (error) {
-    alert("Delete failed: " + error.message);
-    return;
+  submitBtn.disabled = true;
+
+  submitBtn.innerHTML =
+    "Please wait...";
+
+  try {
+
+    const name =
+      document.getElementById("name")
+      .value.trim();
+
+    const price =
+      document.getElementById("price")
+      .value.trim();
+
+    const location =
+      document.getElementById("location")
+      .value.trim();
+
+    const description =
+      document.getElementById("description")
+      .value.trim();
+
+    const file =
+      document.getElementById("image")
+      .files[0];
+
+    if (
+      !name ||
+      !price ||
+      !location
+    ) {
+
+      alert(
+        "Please fill all required fields"
+      );
+
+      resetButton();
+
+      return;
+    }
+
+    let imageUrl = null;
+
+    /* =========================
+    IMAGE UPLOAD
+    ========================= */
+
+    if (file) {
+
+      const fileName =
+        `${Date.now()}-${file.name}`;
+
+      const {
+        error: uploadError
+      } = await supabase.storage
+          .from("hostel-images")
+          .upload(fileName, file);
+
+      if (uploadError) {
+
+        console.log(uploadError);
+
+        alert(
+          "Image upload failed"
+        );
+
+        resetButton();
+
+        return;
+      }
+
+      const {
+        data: publicData
+      } = supabase.storage
+          .from("hostel-images")
+          .getPublicUrl(fileName);
+
+      imageUrl =
+        publicData.publicUrl;
+    }
+
+    /* =========================
+    UPDATE HOSTEL
+    ========================= */
+
+    if (editingId) {
+
+      const updateData = {
+        name,
+        price,
+        location,
+        description
+      };
+
+      if (imageUrl) {
+
+        updateData.image_url =
+          imageUrl;
+      }
+
+      const { error } =
+        await supabase
+          .from("hostels")
+          .update(updateData)
+          .eq("id", editingId);
+
+      if (error) {
+
+        console.log(error);
+
+        alert("Update failed");
+
+        resetButton();
+
+        return;
+      }
+
+      alert(
+        "Hostel updated successfully"
+      );
+
+      editingId = null;
+
+      document.getElementById(
+        "formTitle"
+      ).innerHTML = `
+        <i class="fa fa-plus-circle"></i>
+        Add New Hostel
+      `;
+
+    }
+
+    /* =========================
+    INSERT HOSTEL
+    ========================= */
+
+    else {
+
+      if (!imageUrl) {
+
+        alert(
+          "Please select an image"
+        );
+
+        resetButton();
+
+        return;
+      }
+
+      const { error } =
+        await supabase
+          .from("hostels")
+          .insert([
+            {
+              name,
+              price,
+              location,
+              description,
+              image_url: imageUrl
+            }
+          ]);
+
+      if (error) {
+
+        console.log(error);
+
+        alert(
+          "Failed to add hostel"
+        );
+
+        resetButton();
+
+        return;
+      }
+
+      alert(
+        "Hostel added successfully"
+      );
+    }
+
+    /* =========================
+    RESET FORM
+    ========================= */
+
+    document.getElementById("name").value = "";
+
+    document.getElementById("price").value = "";
+
+    document.getElementById("location").value = "";
+
+    document.getElementById("description").value = "";
+
+    document.getElementById("image").value = "";
+
+    loadHostels();
+
+    resetButton();
+
+  } catch (err) {
+
+    console.log(err);
+
+    alert(
+      "Something went wrong"
+    );
+
+    resetButton();
   }
-
-  alert("Deleted successfully");
-  loadHostels();
 }
 
-window.deleteHostel = deleteHostel;
 
-/* ================= LOGOUT ================= */
+/* =========================
+BUTTON RESET
+========================= */
+
+function resetButton() {
+
+  submitBtn.disabled = false;
+
+  submitBtn.innerHTML =
+    editingId
+      ? "Update Hostel"
+      : "Upload Hostel";
+}
+
+
+/* =========================
+DELETE HOSTEL
+========================= */
+
+window.deleteHostel =
+async function(id) {
+
+  const confirmDelete =
+    confirm(
+      "Delete this hostel?"
+    );
+
+  if (!confirmDelete) return;
+
+  try {
+
+    const { error } =
+      await supabase
+        .from("hostels")
+        .delete()
+        .eq("id", id);
+
+    if (error) {
+
+      console.log(error);
+
+      alert(
+        "Delete failed"
+      );
+
+      return;
+    }
+
+    alert(
+      "Hostel deleted"
+    );
+
+    loadHostels();
+
+  } catch (err) {
+
+    console.log(err);
+
+    alert(
+      "Something went wrong"
+    );
+  }
+};
+
+
+/* =========================
+LOGOUT
+========================= */
+
 window.logout = async () => {
+
   await supabase.auth.signOut();
-  window.location.href = "admin-login.html";
+
+  window.location.href =
+    "admin-login.html";
 };
+
+
+/* =========================
+BUTTON EVENT
+========================= */
+
+submitBtn.addEventListener(
+  "click",
+  addHostel
+);
 
 </script>
 
