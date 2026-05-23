@@ -40,7 +40,7 @@ SIGNUP.HTML
       <!-- NAME -->
       <div class="input-group">
         <i class="fa fa-user"></i>
-        <input type="text" id="name" placeholder="Full Name">
+        <input type="text" id="name" placeholder="Username">
       </div>
 
       <!-- EMAIL -->
@@ -110,42 +110,53 @@ window.signup = async () => {
     document.getElementById("password").value.trim();
 
   if (!name || !email || !password) {
+
     alert("Fill all fields");
     return;
   }
 
+  const button =
+    document.querySelector("button");
+
+  button.disabled = true;
+  button.innerHTML = "Creating account...";
+
   const { data, error } =
     await supabase.auth.signUp({
+
       email,
-      password
+      password,
+
+      options: {
+
+        data: {
+          name
+        }
+
+      }
+
     });
 
+  console.log("SIGNUP RESPONSE:", data);
+  console.log("SIGNUP ERROR:", error);
+
   if (error) {
+
     alert(error.message);
+
+    button.disabled = false;
+    button.innerHTML = `
+      <i class="fa fa-user-plus"></i>
+      Create Account
+    `;
+
     return;
-  }
-
-  const user = data.user;
-
-  if (user) {
-
-    const { error: profileError } =
-      await supabase
-        .from("profiles")
-        .insert([{
-          id: user.id,
-          name,
-          email
-        }]);
-
-    if (profileError) {
-      console.log(profileError);
-    }
   }
 
   alert("Signup successful");
 
-  window.location.href = "login.html";
+  window.location.href =
+    "login.html";
 };
 
 </script>
