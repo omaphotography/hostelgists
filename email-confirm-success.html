@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Email Verified - HostelGist</title>
+
+  <link rel="stylesheet" href="css/style.css"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+
+  <style>
+    body {
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      min-height:100vh;
+      background: linear-gradient(135deg,#4f46e5,#7c3aed);
+    }
+
+    .success-card {
+      background:white;
+      padding:40px;
+      border-radius:30px;
+      text-align:center;
+      max-width:420px;
+      width:90%;
+      box-shadow:0 25px 60px rgba(0,0,0,0.25);
+      animation: pop 0.4s ease;
+    }
+
+    @keyframes pop {
+      from { transform: scale(0.8); opacity:0; }
+      to { transform: scale(1); opacity:1; }
+    }
+
+    .success-icon {
+      font-size:70px;
+      color:#10b981;
+      margin-bottom:15px;
+    }
+
+    h1 {
+      margin-bottom:10px;
+      font-size:24px;
+    }
+
+    p {
+      color:gray;
+      margin-bottom:25px;
+      line-height:1.6;
+    }
+
+    .btn {
+      display:inline-block;
+      padding:14px 20px;
+      background:linear-gradient(135deg,#4f46e5,#06b6d4);
+      color:white;
+      border-radius:15px;
+      text-decoration:none;
+      font-weight:700;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="success-card">
+
+    <i class="fa fa-circle-check success-icon"></i>
+
+    <h1>Email Verified Successfully</h1>
+
+    <p>
+      Your account has been confirmed.
+      You can now log in and access HostelGist.
+    </p>
+
+    <a href="login.html" class="btn">
+      Go to Login
+    </a>
+
+  </div>
+
+</body>
+</html>
